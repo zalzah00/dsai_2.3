@@ -76,19 +76,30 @@ Answer:
 
 ```python
 # Protobuf schema (book.proto)
+syntax = "proto3";
+
+message Book {
+  string title = 1;
+  string author = 2;
+  int32 page_count = 3;
+}
+
+service Library {
+  rpc checkoutBook(Book) returns (Book) {}
+}
 
 # Protobuf server (book_server.py)
 from concurrent import futures
 import grpc
-import library_pb2_grpc
+import book_pb2_grpc
 
-class LibraryServicer(library_pb2_grpc.LibraryServicer):
+class LibraryServicer(book_pb2_grpc.LibraryServicer):
     def checkoutBook(self, request, context):
         print(f"Server received checkout request for: {request.title}")
         return request
 
 server = grpc.server(futures.ThreadPoolExecutor(max_workers=2))
-library_pb2_grpc.add_LibraryServicer_to_server(LibraryServicer(), server)
+library_pb2_grpc.add_BookServicer_to_server(LibraryServicer(), server)
 server.add_insecure_port('[::]:50051')
 server.start()
 print("Server started on port 50051...")
