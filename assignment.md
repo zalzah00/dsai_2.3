@@ -25,6 +25,7 @@ struct Student {
 service School {
   Student enrollCourse(1: required Student student, 2: required string courseName)
 }
+
 # Thrift server (student_server.py)
 import thriftpy2
 student_thrift = thriftpy2.load("student.thrift", module_name="student_thrift")
